@@ -1,2 +1,2 @@
 #!/bin/bash
-docker images
+docker image ls
