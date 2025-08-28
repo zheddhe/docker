@@ -10,3 +10,4 @@ docker container run -it --rm \
 	"${@:3}" \
 	--name "${2:-first_container}" \
 	"${1:-first_image}"
+	# les commandes à envoyer au container sont à placer ici
