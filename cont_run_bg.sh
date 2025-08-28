@@ -1,5 +1,5 @@
 #!/bin/bash
-# lancement en --detach (background)
-docker container run -d \
+# lancement en -d ou --detach (background)
+docker container run --detach \
 	--name "${2:-first_container}" \
 	"${1:-first_image}"
