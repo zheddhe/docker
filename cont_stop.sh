@@ -1,2 +1,3 @@
 #!/bin/bash
-docker container stop ${1:-first_container}
+docker container stop \
+	"${1:-first_container}"

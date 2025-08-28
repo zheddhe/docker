@@ -1,2 +1,3 @@
 #!/bin/bash
-docker container logs ${1:-first_container}
+docker container logs \
+	"${1:-first_container}"
