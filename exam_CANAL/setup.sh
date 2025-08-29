@@ -43,7 +43,10 @@ docker image build ./content -t my_content_test_image:1.0.0
 # 	--name my_content_test_container \
 # 	my_content_test_image:1.0.0 bash
 
-# lancement des container avec docker compose en avant plan (avec logs)
-docker compose up --build
-# arrêt des containers docker compose
-docker compose down
+# lancement des container avec docker compose en arrière plan (-d)
+docker compose up -d
+# arrêt et suppression des containers/network via docker compose 
+# idéalement on mettrait plus qu'un délai de grâce mais un vrai évènement
+# pour vérifier l'extinction (si par exemple les containers de test n'ont pas
+# terminé)
+docker compose down --timeout 10
