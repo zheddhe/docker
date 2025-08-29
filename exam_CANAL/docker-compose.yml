@@ -1,0 +1,76 @@
+# pas de version en docker compose v2
+# on pourrait également définir un "include" pour les données répétées à réutiliser dans chaque service 
+# - variables d'env
+# - volumes binding
+services:
+  fastapi:
+    image: datascientest/fastapi:1.0.0
+    container_name: my_fastapi_container_from_compose
+    networks:
+      - my_network_from_compose
+    ports:
+      - "8000:8000"
+    # test de dispo de l'API avant de passer aux autres containers
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/status || exit 1"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+      start_period: 1s
+  test_authentication:
+    image: my_authentication_test_image:1.0.0
+    container_name: my_authentication_test_container_from_compose
+    networks:
+      - my_network_from_compose
+    environment:
+      LOG: 1
+      # on utilise la resolution DNS du network partagé
+      API_ADDRESS: "my_fastapi_container_from_compose"
+      API_PORT: 8000
+    volumes:
+      - ./logs:/tests/logs
+    restart: "no"
+    # le service fastapi doit être démarré (au moins) avant de lancer les test
+    # on met une vérification régulière curl du service avant de lancer la batterie de tests
+    depends_on:
+      fastapi:
+        condition: service_healthy
+  test_authorization:
+    image: my_authorization_test_image:1.0.0
+    container_name: my_authorization_test_container_from_compose
+    networks:
+      - my_network_from_compose
+    environment:
+      LOG: 1
+      # on utilise la resolution DNS du network partagé
+      API_ADDRESS: "my_fastapi_container_from_compose"
+      API_PORT: 8000
+    volumes:
+      - ./logs:/tests/logs
+    restart: "no"
+    # le service fastapi doit être démarré (au moins) avant de lancer les test
+    # on met une vérification régulière curl du service avant de lancer la batterie de tests
+    depends_on:
+      fastapi:
+        condition: service_healthy
+  test_content:
+    image: my_content_test_image:1.0.0
+    container_name: my_content_test_container_from_compose
+    networks:
+      - my_network_from_compose
+    environment:
+      LOG: 1
+      # on utilise la resolution DNS du network partagé
+      API_ADDRESS: "my_fastapi_container_from_compose"
+      API_PORT: 8000
+    volumes:
+      - ./logs:/tests/logs
+    restart: "no"
+    # le service fastapi doit être démarré (au moins) avant de lancer les test
+    # on met une vérification régulière curl du service avant de lancer la batterie de tests
+    depends_on:
+      fastapi:
+        condition: service_healthy
+# network dédié partagé par les 4 containers
+networks:
+  my_network_from_compose:
