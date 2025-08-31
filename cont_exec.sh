@@ -1,4 +1,4 @@
 #!/bin/bash
 docker container exec \
-	"${1:-first_container}" \
+	${1:-first_container} \
 	bash
